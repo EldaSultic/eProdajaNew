@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using eProdaja.Services;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,60 +11,47 @@ namespace eProdaja.Controllers
     [Route("[controller]")]
     public class ProductsController : ControllerBase
     {
-        private static List<Products> _list;
-        static ProductsController()
-        {
-            _list = new List<Products> {
-                new Products()
-                {
-                    Id=1,
-                    Name="Laptop"
-                },
-                new Products()
-                {
-                    Id=2,
-                    Name="Mouse"
-                }
-            };
-        }
 
+        public IProductsService _productsService { get; set; }
+
+        public ProductsController(IProductsService productsService)
+        {
+            _productsService = productsService;
+        }
 
 
         [HttpGet]
         public IEnumerable<Products> Get()
         {
 
-            return _list;
+            return _productsService.Get();
         }
 
         [HttpGet("{id}")]
         public Products GetById(int id)
         {
-            return _list.FirstOrDefault(x => x.Id == id);
+            return _productsService.GetById(id);
         }
 
         [HttpPost]
         public Products Insert(Products p)
         {
-            _list.Add(p);
-            return p;
+            return _productsService.Insert(p);
         }
 
         [HttpPut("{id}")]
         public Products Update(int id, Products p)
         {
-            var current = _list.FirstOrDefault(x => x.Id == id);
-            current.Name = p.Name;
-            return current;
+            return _productsService.Update(id,p);
         }
 
         public class Products
-    {
+        {
             public int Id { get; set; }
             public string Name { get; set; }
 
-    }
-            
+        }
+
 
     }
 }
